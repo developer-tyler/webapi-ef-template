@@ -9,6 +9,7 @@ import CustomerNotes from './components/CustomerNotes';
 import CustomerSummary from './components/CustomerSummary';
 import PlantCategories from './components/PlantCategories';
 import ManagePlant from './components/ManagePlant';
+import CertificatePage from './components/CertificatePage';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import './components/AllForecasts.css';
 import './components/AllCustomers.css';
@@ -121,6 +122,7 @@ function AppContent() {
           <Route path="/customers/:custId/notes" element={<CustomerNotes />} />
           <Route path="/plant-categories" element={<PlantCategories />} />
           <Route path="/manage-plant" element={<ManagePlant />} />
+          <Route path="/certificate/:id" element={<CertificatePage />} />
         </Routes>
       </header>
     </div>

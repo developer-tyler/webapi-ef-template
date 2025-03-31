@@ -9,10 +9,12 @@ namespace test_webapi.Controllers
     public class InspectionController : ControllerBase
     {
         private readonly IInspectionService _service;
+        private readonly IEmailService _emailService;
 
-        public InspectionController(IInspectionService service)
+        public InspectionController(IInspectionService service, IEmailService emailService)
         {
             _service = service;
+            _emailService = emailService;
         }
 
         [HttpGet]
@@ -59,6 +61,29 @@ namespace test_webapi.Controllers
         {
             await _service.DeleteInspectionAsync(id);
             return NoContent();
+        }
+
+        [HttpPost("{id}/email")]
+        public async Task<IActionResult> EmailCertificate(int id, IFormFile pdf)
+        {
+            var inspection = await _service.GetInspectionByIdAsync(id);
+            if (inspection == null)
+            {
+                return NotFound();
+            }
+
+            if (pdf == null || pdf.Length == 0)
+            {
+                return BadRequest("No PDF file received");
+            }
+
+            using var ms = new MemoryStream();
+            await pdf.CopyToAsync(ms);
+            var pdfBytes = ms.ToArray();
+
+            await _emailService.SendCertificateEmailAsync(pdfBytes, "malcolm@thetylers.co.uk", pdf.FileName);
+            
+            return Ok();
         }
     }
 }

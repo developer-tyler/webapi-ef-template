@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { generatePdfBlob, getPdfFileName } from '../components/InspectionCertificateTemplate';
 
 const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5207/api';
 
@@ -31,13 +32,35 @@ const remove = async (id) => {
     await axios.delete(`${baseUrl}/inspection/${id}`);
 };
 
+const emailCertificate = async (id) => {
+    try {
+        const inspection = await getById(id);
+        const pdfBlob = await generatePdfBlob(inspection);
+        const filename = getPdfFileName(inspection);
+
+        const formData = new FormData();
+        formData.append('pdf', pdfBlob, filename);
+
+        await axios.post(`${baseUrl}/inspection/${id}/email`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return true;
+    } catch (error) {
+        console.error('Error sending certificate:', error);
+        throw error;
+    }
+};
+
 const inspectionService = {
     getAll,
     getById,
     getByPlantHolding,
     create,
     update,
-    remove
+    remove,
+    emailCertificate
 };
 
 export default inspectionService;

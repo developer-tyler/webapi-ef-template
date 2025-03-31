@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { format } from 'date-fns';
-import { 
-    IconButton, 
-    Button,
+import React, { useState, useEffect, useCallback } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
+import {
     Table,
     TableBody,
     TableCell,
@@ -10,20 +8,21 @@ import {
     TableHead,
     TableRow,
     Paper,
+    Button,
+    IconButton,
     Dialog,
-    DialogContent
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    Snackbar,
+    Alert
 } from '@mui/material';
-import { 
-    Edit as EditIcon, 
-    Delete as DeleteIcon, 
-    Add as AddIcon,
-    WorkspacePremium as CertificateIcon 
-} from '@mui/icons-material';
-import { useTheme } from '../contexts/ThemeContext';
-import InspectionForm from './InspectionForm';
+import { Delete as DeleteIcon, Assignment as CertificateIcon, Email as EmailIcon, Edit as EditIcon } from '@mui/icons-material';
 import inspectionService from '../services/inspectionService';
-import './InspectionList.css';
-import CertificateViewer from './CertificateViewer';
+import InspectionForm from './InspectionForm';
+import { format } from 'date-fns';
+import './InspectionList.css';  // Import the CSS file
 
 const InspectionList = ({ holdingId }) => {
     const { isDarkMode } = useTheme();
@@ -31,16 +30,12 @@ const InspectionList = ({ holdingId }) => {
     const [showForm, setShowForm] = useState(false);
     const [selectedInspection, setSelectedInspection] = useState(null);
     const [error, setError] = useState(null);
-    const [showCertificate, setShowCertificate] = useState(false);
-    const [certificateInspection, setCertificateInspection] = useState(null);
+    const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+    const [emailingInspection, setEmailingInspection] = useState(null);
+    const [successMessage, setSuccessMessage] = useState('');
+    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 
-    useEffect(() => {
-        if (holdingId) {
-            loadInspections();
-        }
-    }, [holdingId]);
-
-    const loadInspections = async () => {
+    const loadInspections = useCallback(async () => {
         try {
             const data = await inspectionService.getByPlantHolding(holdingId);
             setInspections(data);
@@ -49,7 +44,13 @@ const InspectionList = ({ holdingId }) => {
             console.error('Error loading inspections:', error);
             setError('Failed to load inspections');
         }
-    };
+    }, [holdingId]);
+
+    useEffect(() => {
+        if (holdingId) {
+            loadInspections();
+        }
+    }, [holdingId, loadInspections]);
 
     const handleAdd = () => {
         setSelectedInspection(null);
@@ -103,8 +104,33 @@ const InspectionList = ({ holdingId }) => {
     };
 
     const handleShowCertificate = (inspection) => {
-        setCertificateInspection(inspection);
-        setShowCertificate(true);
+        // Open in a new window, using 'popup' to ensure it opens as a separate window
+        window.open(`/certificate/${inspection.uniqueRef}`, 'certificate', 'popup,width=800,height=600');
+    };
+
+    const handleEmailClick = (inspection) => {
+        setEmailingInspection(inspection);
+        setEmailDialogOpen(true);
+    };
+
+    const handleEmailConfirm = async () => {
+        try {
+            await inspectionService.emailCertificate(emailingInspection.uniqueRef);
+            setEmailDialogOpen(false);
+            setEmailingInspection(null);
+            setError(null);
+            setSuccessMessage('Certificate sent successfully');
+            setShowSuccessAlert(true);
+        } catch (error) {
+            console.error('Error emailing certificate:', error);
+            setError('Failed to email certificate');
+            setEmailDialogOpen(false);
+        }
+    };
+
+    const handleEmailCancel = () => {
+        setEmailDialogOpen(false);
+        setEmailingInspection(null);
     };
 
     return (
@@ -114,7 +140,6 @@ const InspectionList = ({ holdingId }) => {
                 <Button
                     variant="contained"
                     color="primary"
-                    startIcon={<AddIcon />}
                     onClick={handleAdd}
                 >
                     Add Inspection
@@ -166,6 +191,13 @@ const InspectionList = ({ holdingId }) => {
                                         >
                                             <CertificateIcon fontSize="small" />
                                         </IconButton>
+                                        <IconButton
+                                            size="small"
+                                            onClick={() => handleEmailClick(inspection)}
+                                            color="info"
+                                        >
+                                            <EmailIcon fontSize="small" />
+                                        </IconButton>
                                     </div>
                                 </TableCell>
                             </TableRow>
@@ -180,6 +212,41 @@ const InspectionList = ({ holdingId }) => {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            {/* Email confirmation dialog */}
+            <Dialog
+                open={emailDialogOpen}
+                onClose={handleEmailCancel}
+            >
+                <DialogTitle>Send Certificate</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        This will send the certificate to the customer. Are you sure you want to proceed?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleEmailCancel}>Cancel</Button>
+                    <Button onClick={handleEmailConfirm} color="primary">
+                        Send
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Success message */}
+            <Snackbar 
+                open={showSuccessAlert} 
+                autoHideDuration={6000} 
+                onClose={() => setShowSuccessAlert(false)}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert 
+                    onClose={() => setShowSuccessAlert(false)} 
+                    severity="success"
+                    variant="filled"
+                >
+                    {successMessage}
+                </Alert>
+            </Snackbar>
 
             {showForm && (
                 <div>
@@ -199,28 +266,6 @@ const InspectionList = ({ holdingId }) => {
                     </div>
                 </div>
             )}
-
-            <Dialog 
-                open={showCertificate} 
-                onClose={() => setShowCertificate(false)}
-                maxWidth="xl"
-                fullWidth
-                PaperProps={{
-                    style: { 
-                        minHeight: '90vh',
-                        maxWidth: '1200px',
-                        backgroundColor: isDarkMode ? '#1a1a1a' : '#ffffff'
-                    }
-                }}
-            >
-                <DialogContent style={{ padding: 0 }}>
-                    {certificateInspection && (
-                        <CertificateViewer 
-                            inspection={certificateInspection}
-                        />
-                    )}
-                </DialogContent>
-            </Dialog>
         </div>
     );
 };

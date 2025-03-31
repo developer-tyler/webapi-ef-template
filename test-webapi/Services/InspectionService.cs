@@ -104,7 +104,21 @@ namespace test_webapi.Services
                 MiscNotes = inspection.MiscNotes,
                 HasSubPlant = inspection.HasSubPlant,
                 PlantDescription = inspection.PlantHolding?.Plant?.PlantDescription,
-                SerialNumber = inspection.PlantHolding?.SerialNumber
+                CategoryDescription = inspection.PlantHolding?.Plant?.Category?.CategoryDescription,
+                SerialNumber = inspection.PlantHolding?.SerialNumber,
+                // Map customer data
+                CustID = inspection.PlantHolding?.Customer?.CustID,
+                CompanyName = inspection.PlantHolding?.Customer?.CompanyName,
+                ContactTitle = inspection.PlantHolding?.Customer?.ContactTitle,
+                ContactFirstNames = inspection.PlantHolding?.Customer?.ContactFirstNames,
+                ContactSurname = inspection.PlantHolding?.Customer?.ContactSurname,
+                Line1 = inspection.PlantHolding?.Customer?.Line1,
+                Line2 = inspection.PlantHolding?.Customer?.Line2,
+                Line3 = inspection.PlantHolding?.Customer?.Line3,
+                Line4 = inspection.PlantHolding?.Customer?.Line4,
+                Postcode = inspection.PlantHolding?.Customer?.Postcode,
+                Telephone = inspection.PlantHolding?.Customer?.Telephone,
+                Email = inspection.PlantHolding?.Customer?.Email
             };
         }
     }

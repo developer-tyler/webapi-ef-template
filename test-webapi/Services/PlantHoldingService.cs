@@ -88,7 +88,19 @@ namespace test_webapi.Services
                 StatusID = holding.StatusID,
                 SWL = holding.SWL,
                 PlantDescription = holding.Plant?.PlantDescription,
-                StatusDescription = holding.Status?.StatusDescription
+                StatusDescription = holding.Status?.StatusDescription,
+                // Map customer data
+                CustomerCompanyName = holding.Customer?.CompanyName,
+                CustomerContactTitle = holding.Customer?.ContactTitle,
+                CustomerContactFirstNames = holding.Customer?.ContactFirstNames,
+                CustomerContactSurname = holding.Customer?.ContactSurname,
+                CustomerLine1 = holding.Customer?.Line1,
+                CustomerLine2 = holding.Customer?.Line2,
+                CustomerLine3 = holding.Customer?.Line3,
+                CustomerLine4 = holding.Customer?.Line4,
+                CustomerPostcode = holding.Customer?.Postcode,
+                CustomerTelephone = holding.Customer?.Telephone,
+                CustomerEmail = holding.Customer?.Email
             };
         }
     }

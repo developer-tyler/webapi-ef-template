@@ -1,5 +1,5 @@
 import React from 'react';
-import { Page, Text, View, Document, StyleSheet, Font } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, Font, pdf } from '@react-pdf/renderer';
 import { format } from 'date-fns';
 
 // Register fonts
@@ -50,9 +50,24 @@ const styles = StyleSheet.create({
         padding: '5 10',
         alignSelf: 'flex-start'
     },
+    titleContainer: {
+        alignItems: 'center',
+        marginBottom: 15
+    },
+    mainTitle: {
+        fontWeight: 'bold',
+        fontSize: 12,
+        textAlign: 'center',
+        marginBottom: 2
+    },
+    subTitle: {
+        fontWeight: 'bold',
+        fontSize: 12,
+        textAlign: 'center'
+    },
     table: {
         width: '100%',
-        marginBottom: 10,
+        marginTop: 15,
         border: '1 solid black',
         borderBottom: 'none'
     },
@@ -103,6 +118,20 @@ const InspectionCertificateTemplate = ({ inspection }) => {
         return date ? format(new Date(date), 'dd/MM/yyyy') : '';
     };
 
+    // Helper function to format address
+    const formatAddress = () => {
+        const lines = [
+            inspection.companyName,
+            inspection.line1,
+            inspection.line2,
+            inspection.line3,
+            inspection.line4,
+            inspection.postcode
+        ].filter(line => line); // Remove empty/null/undefined lines
+        
+        return lines.join('\n');
+    };
+
     return (
         <Document>
             <Page size="A4" style={styles.page}>
@@ -118,12 +147,14 @@ const InspectionCertificateTemplate = ({ inspection }) => {
                         </View>
                     </View>
 
-                    <Text style={styles.mainTitle}>
-                        RECORD OF THOROUGH EXAMINATION OF LIFTING PLANT AND EQUIPMENT
-                    </Text>
-                    <Text style={styles.subTitle}>
-                        IN ACCORDANCE WITH THE LIFTING OPERATIONS AND LIFTING EQUIPMENT REGULATIONS 1998 (LOLER)
-                    </Text>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.mainTitle}>
+                            RECORD OF THOROUGH EXAMINATION OF LIFTING PLANT AND EQUIPMENT
+                        </Text>
+                        <Text style={styles.subTitle}>
+                            IN ACCORDANCE WITH THE LIFTING OPERATIONS AND LIFTING EQUIPMENT REGULATIONS 1998 (LOLER)
+                        </Text>
+                    </View>
 
                     <View style={styles.table}>
                         <View style={[styles.tableRow, styles.headerRow]}>
@@ -165,14 +196,7 @@ const InspectionCertificateTemplate = ({ inspection }) => {
                                 <Text>Name and address of owner of equipment</Text>
                             </View>
                             <View style={styles.rightColumn}>
-                                <Text>
-                                    {inspection.companyName || ''}{'\n'}
-                                    {inspection.line1 || ''}{'\n'}
-                                    {inspection.line2 || ''}{'\n'}
-                                    {inspection.line3 || ''}{'\n'}
-                                    {inspection.line4 || ''}{'\n'}
-                                    {inspection.postcode || ''}
-                                </Text>
+                                <Text>{formatAddress()}</Text>
                             </View>
                         </View>
 
@@ -275,6 +299,21 @@ const InspectionCertificateTemplate = ({ inspection }) => {
             </Page>
         </Document>
     );
+};
+
+// Add function to generate PDF blob
+export const generatePdfBlob = async (inspection) => {
+    const doc = <InspectionCertificateTemplate inspection={inspection} />;
+    const blob = await pdf(doc).toBlob();
+    return blob;
+};
+
+// Add utility function for consistent PDF filename generation
+export const getPdfFileName = (inspection) => {
+    const dateStr = inspection.inspectionDate ? format(new Date(inspection.inspectionDate), 'dd-MM-yyyy') : '';
+    const safeName = (str) => str?.replace(/[^a-z0-9-]/gi, '-').toLowerCase() || '';
+    
+    return `${safeName(inspection.companyName)}-${safeName(inspection.plantDescription)}-${safeName(inspection.serialNumber)}-${dateStr}.pdf`;
 };
 
 export default InspectionCertificateTemplate;

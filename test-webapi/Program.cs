@@ -9,6 +9,10 @@ using System.IO;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure EmailSettings
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
+
 // Add services to the container.
 builder.Services.AddCors(options =>
 {
@@ -37,6 +41,8 @@ builder.Services.AddScoped<IPlantHoldingRepository, PlantHoldingRepository>();
 builder.Services.AddScoped<IPlantHoldingService, PlantHoldingService>();
 builder.Services.AddScoped<IInspectionRepository, InspectionRepository>();
 builder.Services.AddScoped<IInspectionService, InspectionService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
