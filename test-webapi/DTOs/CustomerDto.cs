@@ -15,6 +15,5 @@ namespace test_webapi.DTOs
         public string? Telephone { get; set; }
         public string? Fax { get; set; }
         public string? Email { get; set; }
-        public bool? Mailshot { get; set; }
     }
 }

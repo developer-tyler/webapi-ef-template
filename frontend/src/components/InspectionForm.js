@@ -9,7 +9,6 @@ const InspectionForm = ({ inspection, onSubmit, onCancel, holdingId }) => {
         holdingID: holdingId || '',
         inspectionDate: null,
         location: '',
-        vehicleInspectedOn: '',
         recentCheck: '',
         previousCheck: '',
         safeWorking: '',
@@ -17,8 +16,7 @@ const InspectionForm = ({ inspection, onSubmit, onCancel, holdingId }) => {
         rectified: '',
         latestDate: null,
         testDetails: '',
-        miscNotes: '',
-        hasSubPlant: false
+        miscNotes: ''
     });
 
     useEffect(() => {
@@ -26,8 +24,7 @@ const InspectionForm = ({ inspection, onSubmit, onCancel, holdingId }) => {
             setFormData({
                 ...inspection,
                 inspectionDate: inspection.inspectionDate ? new Date(inspection.inspectionDate) : null,
-                latestDate: inspection.latestDate ? new Date(inspection.latestDate) : null,
-                vehicleInspectedOn: inspection.vehicleInspectedOn?.toString() || ''
+                latestDate: inspection.latestDate ? new Date(inspection.latestDate) : null
             });
         } else {
             setFormData(prev => ({
@@ -57,7 +54,6 @@ const InspectionForm = ({ inspection, onSubmit, onCancel, holdingId }) => {
         const submissionData = {
             ...formData,
             holdingID: parseInt(holdingId),
-            vehicleInspectedOn: formData.vehicleInspectedOn ? parseInt(formData.vehicleInspectedOn) : null,
             inspectionDate: formData.inspectionDate ? formData.inspectionDate.toISOString() : null,
             latestDate: formData.latestDate ? formData.latestDate.toISOString() : null
         };
@@ -84,17 +80,6 @@ const InspectionForm = ({ inspection, onSubmit, onCancel, holdingId }) => {
                         type="text"
                         name="location"
                         value={formData.location || ''}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                    />
-                </div>
-
-                <div className="form-group">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Vehicle Inspected On</label>
-                    <input
-                        type="number"
-                        name="vehicleInspectedOn"
-                        value={formData.vehicleInspectedOn || ''}
                         onChange={handleChange}
                         className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                     />
@@ -186,19 +171,6 @@ const InspectionForm = ({ inspection, onSubmit, onCancel, holdingId }) => {
                         rows="3"
                         className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                     />
-                </div>
-
-                <div className="form-group">
-                    <label className="flex items-center space-x-2">
-                        <input
-                            type="checkbox"
-                            name="hasSubPlant"
-                            checked={formData.hasSubPlant || false}
-                            onChange={handleChange}
-                            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <span className="text-sm font-medium text-gray-700">Has Sub Plant</span>
-                    </label>
                 </div>
             </div>
 

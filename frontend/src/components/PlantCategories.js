@@ -1,17 +1,24 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
-import { IconButton, Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { IconButton, Button, TextField, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar } from '@mui/material';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
+import MuiAlert from '@mui/material/Alert';
 import './PlantCategories.css';
 
 function PlantCategories() {
-  const { isDarkMode } = useTheme();
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [categoryDescription, setCategoryDescription] = useState('');
+  const [editingCategory, setEditingCategory] = useState(null);
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
+  const { isDarkMode } = useTheme();
 
   useEffect(() => {
     fetchCategories();
@@ -30,6 +37,26 @@ function PlantCategories() {
       setError(err.message);
       setLoading(false);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
+  const showSuccess = (message) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity: 'success'
+    });
+  };
+
+  const showError = (message) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity: 'error'
+    });
   };
 
   const handleCreateCategory = async () => {
@@ -52,8 +79,9 @@ function PlantCategories() {
       setCategories(prev => [...prev, newCategory]);
       setCategoryDescription('');
       setDialogOpen(false);
+      showSuccess('Category created successfully');
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     }
   };
 
@@ -65,8 +93,8 @@ function PlantCategories() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          categoryID: editingCategory.categoryID,
-          categoryDescription: categoryDescription
+          ...editingCategory,
+          categoryDescription
         }),
       });
 
@@ -82,16 +110,21 @@ function PlantCategories() {
       setEditingCategory(null);
       setCategoryDescription('');
       setDialogOpen(false);
+      showSuccess('Category updated successfully');
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     }
   };
 
-  const handleDeleteCategory = async (categoryId) => {
-    if (!window.confirm('Are you sure you want to delete this category?')) return;
+  const openDeleteDialog = (categoryId) => {
+    const category = categories.find(cat => cat.categoryID === categoryId);
+    setCategoryToDelete(category);
+    setDeleteDialogOpen(true);
+  };
 
+  const handleDeleteCategory = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/PlantCategories/${categoryId}`, {
+      const response = await fetch(`http://localhost:5207/api/PlantCategories/${categoryToDelete.categoryID}`, {
         method: 'DELETE',
       });
 
@@ -99,9 +132,12 @@ function PlantCategories() {
         throw new Error('Failed to delete category');
       }
 
-      setCategories(prev => prev.filter(cat => cat.categoryID !== categoryId));
+      setCategories(prev => prev.filter(cat => cat.categoryID !== categoryToDelete.categoryID));
+      showSuccess('Category deleted successfully');
+      setDeleteDialogOpen(false);
+      setCategoryToDelete(null);
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     }
   };
 
@@ -155,7 +191,7 @@ function PlantCategories() {
               <IconButton onClick={() => openEditDialog(category)} size="small">
                 <EditIcon />
               </IconButton>
-              <IconButton onClick={() => handleDeleteCategory(category.categoryID)} size="small">
+              <IconButton onClick={() => openDeleteDialog(category.categoryID)} size="small">
                 <DeleteIcon />
               </IconButton>
             </div>
@@ -186,6 +222,54 @@ function PlantCategories() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        aria-labelledby="delete-dialog-title"
+      >
+        <DialogTitle id="delete-dialog-title">
+          Confirm Category Deletion
+        </DialogTitle>
+        <DialogContent>
+          <div>
+            <p>Are you sure you want to delete this category?</p>
+            {categoryToDelete && (
+              <p><strong>Category:</strong> {categoryToDelete.categoryDescription}</p>
+            )}
+            <p style={{ color: '#d32f2f', marginTop: '1rem' }}>
+              This action cannot be undone.
+            </p>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleDeleteCategory}
+            color="error"
+            variant="contained"
+          >
+            Delete Category
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <MuiAlert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          variant="filled"
+        >
+          {snackbar.message}
+        </MuiAlert>
+      </Snackbar>
     </div>
   );
 }

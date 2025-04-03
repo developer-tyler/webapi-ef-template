@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using test_webapi.Data;
 
@@ -11,9 +12,11 @@ using test_webapi.Data;
 namespace test_webapi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250402173053_addcascade")]
+    partial class addcascade
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -96,6 +99,9 @@ namespace test_webapi.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<bool?>("Mailshot")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Postcode")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -122,6 +128,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -138,6 +145,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -154,6 +162,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -170,6 +179,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -186,6 +196,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -202,6 +213,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -218,6 +230,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -234,6 +247,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -250,6 +264,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -266,6 +281,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -282,6 +298,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -298,6 +315,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -314,6 +332,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -330,6 +349,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -346,6 +366,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -362,6 +383,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -378,6 +400,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -394,6 +417,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -410,6 +434,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -426,6 +451,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -442,6 +468,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -458,6 +485,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -474,6 +502,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -490,6 +519,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -506,6 +536,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -522,6 +553,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -538,6 +570,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -554,6 +587,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -570,6 +604,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -586,6 +621,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -602,6 +638,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -618,6 +655,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -634,6 +672,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -650,6 +689,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -666,6 +706,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -682,6 +723,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -698,6 +740,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -714,6 +757,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -730,6 +774,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -746,6 +791,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -762,6 +808,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -778,6 +825,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -794,6 +842,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -810,6 +859,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -826,6 +876,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -842,6 +893,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -858,6 +910,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -874,6 +927,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -890,6 +944,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -906,6 +961,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -922,6 +978,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -938,6 +995,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -954,6 +1012,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -970,6 +1029,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -986,6 +1046,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1002,6 +1063,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1018,6 +1080,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1034,6 +1097,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1050,6 +1114,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1066,6 +1131,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1082,6 +1148,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1098,6 +1165,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1114,6 +1182,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1130,6 +1199,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1146,6 +1216,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1162,6 +1233,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1178,6 +1250,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1194,6 +1267,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1210,6 +1284,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1226,6 +1301,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1242,6 +1318,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1258,6 +1335,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1274,6 +1352,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1290,6 +1369,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1306,6 +1386,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1322,6 +1403,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1338,6 +1420,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1354,6 +1437,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1370,6 +1454,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1386,6 +1471,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1402,6 +1488,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1418,6 +1505,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1434,6 +1522,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1450,6 +1539,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1466,6 +1556,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1482,6 +1573,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1498,6 +1590,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1514,6 +1607,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1530,6 +1624,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1546,6 +1641,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1562,6 +1658,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1578,6 +1675,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1594,6 +1692,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1610,6 +1709,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1626,6 +1726,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1642,6 +1743,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1658,6 +1760,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1674,6 +1777,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1690,6 +1794,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         },
@@ -1706,6 +1811,7 @@ namespace test_webapi.Migrations
                             Line2 = "",
                             Line3 = "",
                             Line4 = "",
+                            Mailshot = true,
                             Postcode = "12345",
                             Telephone = "123-456-7890"
                         });
@@ -1777,8 +1883,6 @@ namespace test_webapi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("NoteID");
-
-                    b.HasIndex("CustID");
 
                     b.ToTable("Notes");
 
@@ -3344,16 +3448,6 @@ namespace test_webapi.Migrations
                     b.Navigation("PlantHolding");
                 });
 
-            modelBuilder.Entity("test_webapi.Data.Entities.NoteEntity", b =>
-                {
-                    b.HasOne("test_webapi.Data.Entities.CustomerEntity", "Customer")
-                        .WithMany("Notes")
-                        .HasForeignKey("CustID")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.Navigation("Customer");
-                });
-
             modelBuilder.Entity("test_webapi.Data.Entities.PlantHolding", b =>
                 {
                     b.HasOne("test_webapi.Data.Entities.CustomerEntity", "Customer")
@@ -3376,11 +3470,6 @@ namespace test_webapi.Migrations
                     b.Navigation("Plant");
 
                     b.Navigation("Status");
-                });
-
-            modelBuilder.Entity("test_webapi.Data.Entities.CustomerEntity", b =>
-                {
-                    b.Navigation("Notes");
                 });
 
             modelBuilder.Entity("test_webapi.Data.Entities.PlantCategoryEntity", b =>

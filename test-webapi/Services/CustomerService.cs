@@ -31,8 +31,7 @@ namespace test_webapi.Services
                     Postcode = c.Postcode ?? string.Empty,
                     Telephone = c.Telephone ?? string.Empty,
                     Fax = c.Fax ?? string.Empty,
-                    Email = c.Email ?? string.Empty,
-                    Mailshot = c.Mailshot
+                    Email = c.Email ?? string.Empty
                 })
                 .ToListAsync();
         }
@@ -59,8 +58,7 @@ namespace test_webapi.Services
                 Postcode = customer.Postcode ?? string.Empty,
                 Telephone = customer.Telephone ?? string.Empty,
                 Fax = customer.Fax ?? string.Empty,
-                Email = customer.Email ?? string.Empty,
-                Mailshot = customer.Mailshot
+                Email = customer.Email ?? string.Empty
             };
         }
 
@@ -79,8 +77,7 @@ namespace test_webapi.Services
                 Postcode = customerDto.Postcode ?? string.Empty,
                 Telephone = customerDto.Telephone ?? string.Empty,
                 Fax = customerDto.Fax ?? string.Empty,
-                Email = customerDto.Email ?? string.Empty,
-                Mailshot = customerDto.Mailshot
+                Email = customerDto.Email ?? string.Empty
             };
 
             _context.Customers.Add(customer);
@@ -110,7 +107,6 @@ namespace test_webapi.Services
             customer.Telephone = customerDto.Telephone ?? string.Empty;
             customer.Fax = customerDto.Fax ?? string.Empty;
             customer.Email = customerDto.Email ?? string.Empty;
-            customer.Mailshot = customerDto.Mailshot;
 
             await _context.SaveChangesAsync();
 

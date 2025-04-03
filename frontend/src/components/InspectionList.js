@@ -32,8 +32,17 @@ const InspectionList = ({ holdingId }) => {
     const [error, setError] = useState(null);
     const [emailDialogOpen, setEmailDialogOpen] = useState(false);
     const [emailingInspection, setEmailingInspection] = useState(null);
-    const [successMessage, setSuccessMessage] = useState('');
-    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [inspectionToDelete, setInspectionToDelete] = useState(null);
+    const [snackbar, setSnackbar] = useState({
+        open: false,
+        message: '',
+        severity: 'success'
+    });
+
+    const handleSnackbarClose = () => {
+        setSnackbar(prev => ({ ...prev, open: false }));
+    };
 
     const loadInspections = useCallback(async () => {
         try {
@@ -64,16 +73,39 @@ const InspectionList = ({ holdingId }) => {
         setError(null);
     };
 
-    const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this inspection?')) {
-            try {
-                await inspectionService.remove(id);
-                await loadInspections();
-                setError(null);
-            } catch (error) {
-                console.error('Error deleting inspection:', error);
-                setError('Failed to delete inspection');
+    const openDeleteDialog = (inspection) => {
+        setInspectionToDelete(inspection);
+        setDeleteDialogOpen(true);
+    };
+
+    const handleDeleteInspection = async () => {
+        try {
+            const response = await fetch(`http://localhost:5207/api/Inspection/${inspectionToDelete.uniqueRef}`, {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to delete inspection');
             }
+
+            setInspections(prevInspections => 
+                prevInspections.filter(insp => insp.uniqueRef !== inspectionToDelete.uniqueRef)
+            );
+            
+            setDeleteDialogOpen(false);
+            setInspectionToDelete(null);
+            setSnackbar({
+                open: true,
+                message: 'Inspection deleted successfully',
+                severity: 'success'
+            });
+        } catch (error) {
+            console.error('Error deleting inspection:', error);
+            setSnackbar({
+                open: true,
+                message: `Error deleting inspection: ${error.message}`,
+                severity: 'error'
+            });
         }
     };
 
@@ -119,8 +151,11 @@ const InspectionList = ({ holdingId }) => {
             setEmailDialogOpen(false);
             setEmailingInspection(null);
             setError(null);
-            setSuccessMessage('Certificate sent successfully');
-            setShowSuccessAlert(true);
+            setSnackbar({
+                open: true,
+                message: 'Certificate sent successfully',
+                severity: 'success'
+            });
         } catch (error) {
             console.error('Error emailing certificate:', error);
             setError('Failed to email certificate');
@@ -134,7 +169,7 @@ const InspectionList = ({ holdingId }) => {
     };
 
     return (
-        <div className={`space-y-4 ${isDarkMode ? 'dark' : 'light'}`}>
+        <div className={`inspections-container ${isDarkMode ? 'dark' : 'light'}`}>
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold">Inspections</h2>
                 <Button
@@ -179,7 +214,7 @@ const InspectionList = ({ holdingId }) => {
                                         </IconButton>
                                         <IconButton
                                             size="small"
-                                            onClick={() => handleDelete(inspection.uniqueRef)}
+                                            onClick={() => openDeleteDialog(inspection)}
                                             color="error"
                                         >
                                             <DeleteIcon fontSize="small" />
@@ -233,18 +268,18 @@ const InspectionList = ({ holdingId }) => {
             </Dialog>
 
             {/* Success message */}
-            <Snackbar 
-                open={showSuccessAlert} 
-                autoHideDuration={6000} 
-                onClose={() => setShowSuccessAlert(false)}
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={handleSnackbarClose}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             >
-                <Alert 
-                    onClose={() => setShowSuccessAlert(false)} 
-                    severity="success"
+                <Alert
+                    onClose={handleSnackbarClose}
+                    severity={snackbar.severity}
                     variant="filled"
                 >
-                    {successMessage}
+                    {snackbar.message}
                 </Alert>
             </Snackbar>
 
@@ -266,6 +301,44 @@ const InspectionList = ({ holdingId }) => {
                     </div>
                 </div>
             )}
+
+            <Dialog
+                open={deleteDialogOpen}
+                onClose={() => setDeleteDialogOpen(false)}
+                aria-labelledby="delete-dialog-title"
+                aria-describedby="delete-dialog-description"
+            >
+                <DialogTitle id="delete-dialog-title">
+                    Confirm Inspection Deletion
+                </DialogTitle>
+                <DialogContent>
+                    <div id="delete-dialog-description">
+                        <p>Are you sure you want to delete this inspection?</p>
+                        {inspectionToDelete && (
+                            <>
+                                <p><strong>Serial Number:</strong> {inspectionToDelete.serialNumber}</p>
+                                <p><strong>Date:</strong> {new Date(inspectionToDelete.inspDate).toLocaleDateString()}</p>
+                                <p><strong>Status:</strong> {inspectionToDelete.status}</p>
+                            </>
+                        )}
+                        <p style={{ color: '#d32f2f', marginTop: '1rem' }}>
+                            This action cannot be undone.
+                        </p>
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setDeleteDialogOpen(false)}>
+                        Cancel
+                    </Button>
+                    <Button 
+                        onClick={handleDeleteInspection}
+                        color="error"
+                        variant="contained"
+                    >
+                        Delete Inspection
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

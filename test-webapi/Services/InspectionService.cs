@@ -38,7 +38,6 @@ namespace test_webapi.Services
                 HoldingID = inspectionDto.HoldingID,
                 InspectionDate = inspectionDto.InspectionDate,
                 Location = inspectionDto.Location,
-                VehicleInspectedOn = inspectionDto.VehicleInspectedOn,
                 RecentCheck = inspectionDto.RecentCheck,
                 PreviousCheck = inspectionDto.PreviousCheck,
                 SafeWorking = inspectionDto.SafeWorking,
@@ -46,8 +45,7 @@ namespace test_webapi.Services
                 Rectified = inspectionDto.Rectified,
                 LatestDate = inspectionDto.LatestDate,
                 TestDetails = inspectionDto.TestDetails,
-                MiscNotes = inspectionDto.MiscNotes,
-                HasSubPlant = inspectionDto.HasSubPlant
+                MiscNotes = inspectionDto.MiscNotes
             };
 
             var result = await _repository.AddAsync(inspection);
@@ -63,7 +61,6 @@ namespace test_webapi.Services
                 HoldingID = inspectionDto.HoldingID,
                 InspectionDate = inspectionDto.InspectionDate,
                 Location = inspectionDto.Location,
-                VehicleInspectedOn = inspectionDto.VehicleInspectedOn,
                 RecentCheck = inspectionDto.RecentCheck,
                 PreviousCheck = inspectionDto.PreviousCheck,
                 SafeWorking = inspectionDto.SafeWorking,
@@ -71,8 +68,7 @@ namespace test_webapi.Services
                 Rectified = inspectionDto.Rectified,
                 LatestDate = inspectionDto.LatestDate,
                 TestDetails = inspectionDto.TestDetails,
-                MiscNotes = inspectionDto.MiscNotes,
-                HasSubPlant = inspectionDto.HasSubPlant
+                MiscNotes = inspectionDto.MiscNotes
             };
 
             await _repository.UpdateAsync(inspection);
@@ -93,7 +89,6 @@ namespace test_webapi.Services
                 HoldingID = inspection.HoldingID,
                 InspectionDate = inspection.InspectionDate,
                 Location = inspection.Location,
-                VehicleInspectedOn = inspection.VehicleInspectedOn,
                 RecentCheck = inspection.RecentCheck,
                 PreviousCheck = inspection.PreviousCheck,
                 SafeWorking = inspection.SafeWorking,
@@ -102,7 +97,6 @@ namespace test_webapi.Services
                 LatestDate = inspection.LatestDate,
                 TestDetails = inspection.TestDetails,
                 MiscNotes = inspection.MiscNotes,
-                HasSubPlant = inspection.HasSubPlant,
                 PlantDescription = inspection.PlantHolding?.Plant?.PlantDescription,
                 CategoryDescription = inspection.PlantHolding?.Plant?.Category?.CategoryDescription,
                 SerialNumber = inspection.PlantHolding?.SerialNumber,

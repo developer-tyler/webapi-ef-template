@@ -14,5 +14,8 @@ namespace test_webapi.Data.Entities
         public DateTime? Date { get; set; }
 
         public string? Notes { get; set; }
+
+        [ForeignKey("CustID")]
+        public virtual CustomerEntity? Customer { get; set; }
     }
 }

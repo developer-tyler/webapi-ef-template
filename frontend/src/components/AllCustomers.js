@@ -3,6 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTheme } from '../contexts/ThemeContext';
 import { IconButton } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
 import './AllCustomers.css';
 
 function AllCustomers() {
@@ -14,7 +21,7 @@ function AllCustomers() {
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [newCustomer, setNewCustomer] = useState({
+  const [formData, setFormData] = useState({
     companyName: '',
     contactTitle: '',
     contactFirstNames: '',
@@ -26,9 +33,15 @@ function AllCustomers() {
     postcode: '',
     telephone: '',
     fax: '',
-    email: '',
-    mailshot: false
+    email: ''
   });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [customerToDelete, setCustomerToDelete] = useState(null);
 
   const navigate = useNavigate();
 
@@ -87,13 +100,33 @@ function AllCustomers() {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setNewCustomer(prev => ({
+    setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSnackbarClose = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
+  const showSuccess = (message) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity: 'success'
+    });
+  };
+
+  const showError = (message) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity: 'error'
+    });
+  };
+
+  const handleCreateCustomer = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch('http://localhost:5207/api/Customers', {
@@ -101,33 +134,20 @@ function AllCustomers() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(newCustomer)
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
         throw new Error('Failed to create customer');
       }
 
-      const createdCustomer = await response.json();
-      setCustomers(prev => [...prev, createdCustomer]);
-      setNewCustomer({
-        companyName: '',
-        contactTitle: '',
-        contactFirstNames: '',
-        contactSurname: '',
-        line1: '',
-        line2: '',
-        line3: '',
-        line4: '',
-        postcode: '',
-        telephone: '',
-        fax: '',
-        email: '',
-        mailshot: false
-      });
+      const newCustomer = await response.json();
+      setCustomers(prev => [...prev, newCustomer]);
       setShowForm(false);
+      resetForm();
+      showSuccess('Customer created successfully');
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     }
   };
 
@@ -135,15 +155,16 @@ function AllCustomers() {
     navigate(`/customers/${custId}`);
   };
 
-  const handleDeleteCustomer = async (custId, e) => {
-    e.stopPropagation(); // Prevent card click when clicking delete button
-    
-    if (!window.confirm('Are you sure you want to delete this customer? This action cannot be undone.')) {
-      return;
-    }
+  const openDeleteDialog = (custId, e) => {
+    e.stopPropagation(); // Prevent customer card click
+    const customer = customers.find(c => c.custID === custId);
+    setCustomerToDelete(customer);
+    setDeleteDialogOpen(true);
+  };
 
+  const handleDeleteCustomer = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/Customers/${custId}`, {
+      const response = await fetch(`http://localhost:5207/api/Customers/${customerToDelete.custID}`, {
         method: 'DELETE'
       });
 
@@ -151,10 +172,30 @@ function AllCustomers() {
         throw new Error('Failed to delete customer');
       }
 
-      setCustomers(prev => prev.filter(c => c.custID !== custId));
+      setCustomers(prev => prev.filter(c => c.custID !== customerToDelete.custID));
+      showSuccess('Customer deleted successfully');
+      setDeleteDialogOpen(false);
+      setCustomerToDelete(null);
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      companyName: '',
+      contactTitle: '',
+      contactFirstNames: '',
+      contactSurname: '',
+      line1: '',
+      line2: '',
+      line3: '',
+      line4: '',
+      postcode: '',
+      telephone: '',
+      fax: '',
+      email: ''
+    });
   };
 
   return (
@@ -177,12 +218,12 @@ function AllCustomers() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="customer-form">
+        <form onSubmit={handleCreateCustomer} className="customer-form">
           <div className="form-row">
             <input
               type="text"
               name="companyName"
-              value={newCustomer.companyName}
+              value={formData.companyName}
               onChange={handleInputChange}
               placeholder="Company Name"
               required
@@ -190,7 +231,7 @@ function AllCustomers() {
             <input
               type="text"
               name="contactTitle"
-              value={newCustomer.contactTitle}
+              value={formData.contactTitle}
               onChange={handleInputChange}
               placeholder="Contact Title"
             />
@@ -199,14 +240,14 @@ function AllCustomers() {
             <input
               type="text"
               name="contactFirstNames"
-              value={newCustomer.contactFirstNames}
+              value={formData.contactFirstNames}
               onChange={handleInputChange}
               placeholder="First Names"
             />
             <input
               type="text"
               name="contactSurname"
-              value={newCustomer.contactSurname}
+              value={formData.contactSurname}
               onChange={handleInputChange}
               placeholder="Surname"
             />
@@ -215,14 +256,14 @@ function AllCustomers() {
             <input
               type="text"
               name="line1"
-              value={newCustomer.line1}
+              value={formData.line1}
               onChange={handleInputChange}
               placeholder="Address Line 1"
             />
             <input
               type="text"
               name="line2"
-              value={newCustomer.line2}
+              value={formData.line2}
               onChange={handleInputChange}
               placeholder="Address Line 2"
             />
@@ -231,14 +272,14 @@ function AllCustomers() {
             <input
               type="text"
               name="line3"
-              value={newCustomer.line3}
+              value={formData.line3}
               onChange={handleInputChange}
               placeholder="Address Line 3"
             />
             <input
               type="text"
               name="line4"
-              value={newCustomer.line4}
+              value={formData.line4}
               onChange={handleInputChange}
               placeholder="Address Line 4"
             />
@@ -247,14 +288,14 @@ function AllCustomers() {
             <input
               type="text"
               name="postcode"
-              value={newCustomer.postcode}
+              value={formData.postcode}
               onChange={handleInputChange}
               placeholder="Postcode"
             />
             <input
               type="tel"
               name="telephone"
-              value={newCustomer.telephone}
+              value={formData.telephone}
               onChange={handleInputChange}
               placeholder="Telephone"
             />
@@ -263,28 +304,17 @@ function AllCustomers() {
             <input
               type="tel"
               name="fax"
-              value={newCustomer.fax}
+              value={formData.fax}
               onChange={handleInputChange}
               placeholder="Fax"
             />
             <input
               type="email"
               name="email"
-              value={newCustomer.email}
+              value={formData.email}
               onChange={handleInputChange}
               placeholder="Email"
             />
-          </div>
-          <div className="form-row">
-            <label>
-              <input
-                type="checkbox"
-                name="mailshot"
-                checked={newCustomer.mailshot}
-                onChange={handleInputChange}
-              />
-              Mailshot
-            </label>
           </div>
           <button type="submit" className="submit-btn">Create Customer</button>
         </form>
@@ -302,7 +332,7 @@ function AllCustomers() {
             >
               <div className="card-actions">
                 <IconButton 
-                  onClick={(e) => handleDeleteCustomer(customer.custID, e)} 
+                  onClick={(e) => openDeleteDialog(customer.custID, e)} 
                   size="small"
                   color="error"
                 >
@@ -331,6 +361,57 @@ function AllCustomers() {
       ) : (
         <p className="no-results">No customers found matching your search.</p>
       )}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <MuiAlert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          variant="filled"
+        >
+          {snackbar.message}
+        </MuiAlert>
+      </Snackbar>
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        aria-labelledby="delete-dialog-title"
+        aria-describedby="delete-dialog-description"
+      >
+        <DialogTitle id="delete-dialog-title">
+          Confirm Customer Deletion
+        </DialogTitle>
+        <DialogContent>
+          <div id="delete-dialog-description">
+            <p>Are you sure you want to delete this customer?</p>
+            {customerToDelete && (
+              <>
+                <p><strong>Company:</strong> {customerToDelete.companyName}</p>
+                <p><strong>Contact:</strong> {customerToDelete.contactTitle} {customerToDelete.contactFirstNames} {customerToDelete.contactSurname}</p>
+              </>
+            )}
+            <p style={{ color: '#d32f2f', marginTop: '1rem' }}>
+              This action cannot be undone. All associated notes and plant holdings will also be deleted.
+            </p>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleDeleteCustomer}
+            color="error"
+            variant="contained"
+          >
+            Delete Customer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

@@ -45,6 +45,6 @@ namespace test_webapi.Data.Entities
         [MaxLength(50)]
         public string? Email { get; set; }
 
-        public bool? Mailshot { get; set; }
+        public virtual ICollection<NoteEntity>? Notes { get; set; }
     }
 }

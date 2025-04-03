@@ -11,8 +11,10 @@ import {
   MenuItem,
   InputLabel,
   FormControl,
-  Select
+  Select,
+  Snackbar
 } from '@mui/material';
+import MuiAlert from '@mui/material/Alert';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import './ManagePlant.css';
 
@@ -29,6 +31,13 @@ function ManagePlant() {
     plantCategory: '',
     normalPrice: ''
   });
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [plantToDelete, setPlantToDelete] = useState(null);
 
   useEffect(() => {
     Promise.all([fetchPlants(), fetchCategories()]);
@@ -70,6 +79,27 @@ function ManagePlant() {
     }));
   };
 
+  // Add snackbar handlers
+  const handleSnackbarClose = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
+  const showSuccess = (message) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity: 'success'
+    });
+  };
+
+  const showError = (message) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity: 'error'
+    });
+  };
+
   const handleCreatePlant = async () => {
     try {
       const response = await fetch('http://localhost:5207/api/AllPlant', {
@@ -92,8 +122,9 @@ function ManagePlant() {
         normalPrice: ''
       });
       setDialogOpen(false);
+      showSuccess('Plant created successfully');
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     }
   };
 
@@ -105,8 +136,8 @@ function ManagePlant() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...plantData,
-          plantNameID: editingPlant.plantNameID
+          ...editingPlant,
+          ...plantData
         }),
       });
 
@@ -119,6 +150,7 @@ function ManagePlant() {
           ? { ...plant, ...plantData }
           : plant
       ));
+      
       setEditingPlant(null);
       setPlantData({
         plantDescription: '',
@@ -126,16 +158,21 @@ function ManagePlant() {
         normalPrice: ''
       });
       setDialogOpen(false);
+      showSuccess('Plant updated successfully');
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     }
   };
 
-  const handleDeletePlant = async (plantId) => {
-    if (!window.confirm('Are you sure you want to delete this plant?')) return;
+  const openDeleteDialog = (plantId) => {
+    const plant = plants.find(p => p.plantNameID === plantId);
+    setPlantToDelete(plant);
+    setDeleteDialogOpen(true);
+  };
 
+  const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/AllPlant/${plantId}`, {
+      const response = await fetch(`http://localhost:5207/api/AllPlant/${plantToDelete.plantNameID}`, {
         method: 'DELETE',
       });
 
@@ -148,9 +185,12 @@ function ManagePlant() {
         throw new Error('Failed to delete plant');
       }
 
-      setPlants(prev => prev.filter(plant => plant.plantNameID !== plantId));
+      setPlants(prev => prev.filter(plant => plant.plantNameID !== plantToDelete.plantNameID));
+      showSuccess('Plant deleted successfully');
+      setDeleteDialogOpen(false);
+      setPlantToDelete(null);
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     }
   };
 
@@ -219,7 +259,7 @@ function ManagePlant() {
               <IconButton onClick={() => openEditDialog(plant)} size="small">
                 <EditIcon />
               </IconButton>
-              <IconButton onClick={() => handleDeletePlant(plant.plantNameID)} size="small">
+              <IconButton onClick={() => openDeleteDialog(plant.plantNameID)} size="small">
                 <DeleteIcon />
               </IconButton>
             </div>
@@ -274,6 +314,57 @@ function ManagePlant() {
           <Button onClick={() => setDialogOpen(false)}>Cancel</Button>
           <Button onClick={editingPlant ? handleUpdatePlant : handleCreatePlant}>
             {editingPlant ? 'Update' : 'Create'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <MuiAlert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          variant="filled"
+        >
+          {snackbar.message}
+        </MuiAlert>
+      </Snackbar>
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        aria-labelledby="delete-dialog-title"
+      >
+        <DialogTitle id="delete-dialog-title">
+          Confirm Plant Deletion
+        </DialogTitle>
+        <DialogContent>
+          <div>
+            <p>Are you sure you want to delete this plant?</p>
+            {plantToDelete && (
+              <>
+                <p><strong>Description:</strong> {plantToDelete.plantDescription}</p>
+                <p><strong>Category:</strong> {plantToDelete.plantCategory}</p>
+              </>
+            )}
+            <p style={{ color: '#d32f2f', marginTop: '1rem' }}>
+              This action cannot be undone.
+            </p>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleDelete}
+            color="error"
+            variant="contained"
+          >
+            Delete Plant
           </Button>
         </DialogActions>
       </Dialog>

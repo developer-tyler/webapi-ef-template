@@ -22,7 +22,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Collapse
+  Collapse,
+  Snackbar
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -33,6 +34,7 @@ import {
 } from '@mui/icons-material';
 import './CustomerSummary.css';
 import InspectionList from './InspectionList';
+import MuiAlert from '@mui/material/Alert';
 
 function CustomerSummary() {
   const { custId } = useParams();
@@ -51,6 +53,7 @@ function CustomerSummary() {
   const [newNoteText, setNewNoteText] = useState('');
   const [plantHoldingDialogOpen, setPlantHoldingDialogOpen] = useState(false);
   const [editingPlantHolding, setEditingPlantHolding] = useState(null);
+  const [expandedHolding, setExpandedHolding] = useState(null);
   const [allPlants, setAllPlants] = useState([]);
   const [allStatuses, setAllStatuses] = useState([]);
   const [newPlantHolding, setNewPlantHolding] = useState({
@@ -60,7 +63,17 @@ function CustomerSummary() {
     statusID: '',
     swl: ''
   });
-  const [expandedHolding, setExpandedHolding] = useState(null);
+  // Add snackbar state
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
+  const [deleteCustomerDialog, setDeleteCustomerDialog] = useState(false);
+  const [deleteNoteDialog, setDeleteNoteDialog] = useState(false);
+  const [deleteHoldingDialog, setDeleteHoldingDialog] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState(null);
+  const [holdingToDelete, setHoldingToDelete] = useState(null);
 
   const toggleHoldingExpand = (holdingId) => {
     setExpandedHolding(expandedHolding === holdingId ? null : holdingId);
@@ -141,6 +154,28 @@ function CustomerSummary() {
     navigate('/customers');
   };
 
+  // Add handleSnackbarClose function
+  const handleSnackbarClose = () => {
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
+  const showError = (message) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity: 'error'
+    });
+  };
+
+  const showSuccess = (message) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity: 'success'
+    });
+  };
+
+  // Update handleEditCustomer
   const handleEditCustomer = async () => {
     try {
       const response = await fetch(`http://localhost:5207/api/Customers/${custId}`, {
@@ -157,16 +192,18 @@ function CustomerSummary() {
 
       setCustomer(editingCustomer);
       setEditDialogOpen(false);
+      showSuccess('Customer updated successfully');
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     }
   };
 
-  const handleDeleteCustomer = async () => {
-    if (!window.confirm('Are you sure you want to delete this customer?')) {
-      return;
-    }
+  // Update handleDeleteCustomer
+  const openDeleteCustomerDialog = () => {
+    setDeleteCustomerDialog(true);
+  };
 
+  const handleDeleteCustomer = async () => {
     try {
       const response = await fetch(`http://localhost:5207/api/Customers/${custId}`, {
         method: 'DELETE'
@@ -176,9 +213,14 @@ function CustomerSummary() {
         throw new Error('Failed to delete customer');
       }
 
-      navigate('/customers');
+      showSuccess('Customer deleted successfully');
+      setDeleteCustomerDialog(false);
+      setTimeout(() => {
+        navigate('/customers');
+      }, 1000); // Give time for the success message to be seen
+
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     }
   };
 
@@ -248,22 +290,30 @@ function CustomerSummary() {
   };
 
   const handleDeleteNote = async (noteId) => {
-    if (!window.confirm('Are you sure you want to delete this note?')) {
-      return;
-    }
+    openDeleteNoteDialog(noteId);
+  };
 
+  const openDeleteNoteDialog = (note) => {
+    setNoteToDelete(note);
+    setDeleteNoteDialog(true);
+  };
+
+  const handleConfirmDeleteNote = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/Notes/${noteId}`, {
-        method: 'DELETE',
+      const response = await fetch(`http://localhost:5207/api/Notes/${noteToDelete.noteID}`, {
+        method: 'DELETE'
       });
 
       if (!response.ok) {
         throw new Error('Failed to delete note');
       }
 
-      setNotes(prev => prev.filter(note => note.noteID !== noteId));
+      setNotes(prev => prev.filter(n => n.noteID !== noteToDelete.noteID));
+      setDeleteNoteDialog(false);
+      setNoteToDelete(null);
+      showSuccess('Note deleted successfully');
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     }
   };
 
@@ -337,23 +387,27 @@ function CustomerSummary() {
     }
   };
 
-  const handleDeletePlantHolding = async (holdingId) => {
-    if (!window.confirm('Are you sure you want to delete this plant holding?')) {
-      return;
-    }
+  const openDeleteHoldingDialog = (holding) => {
+    setHoldingToDelete(holding);
+    setDeleteHoldingDialog(true);
+  };
 
+  const handleDeletePlantHolding = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/PlantHolding/${holdingId}`, {
-        method: 'DELETE',
+      const response = await fetch(`http://localhost:5207/api/PlantHolding/${holdingToDelete.holdingID}`, {
+        method: 'DELETE'
       });
 
       if (!response.ok) {
         throw new Error('Failed to delete plant holding');
       }
 
-      setPlantHoldings(prev => prev.filter(holding => holding.holdingID !== holdingId));
+      setPlantHoldings(prev => prev.filter(ph => ph.holdingID !== holdingToDelete.holdingID));
+      setDeleteHoldingDialog(false);
+      setHoldingToDelete(null);
+      showSuccess('Plant holding deleted successfully');
     } catch (err) {
-      setError(err.message);
+      showError(err.message);
     }
   };
 
@@ -423,7 +477,7 @@ function CustomerSummary() {
           <IconButton onClick={() => setEditDialogOpen(true)} color="primary">
             <EditIcon />
           </IconButton>
-          <IconButton onClick={handleDeleteCustomer} color="error">
+          <IconButton onClick={openDeleteCustomerDialog} color="error">
             <DeleteIcon />
           </IconButton>
         </div>
@@ -459,11 +513,7 @@ function CustomerSummary() {
               <p>{customer?.postcode}</p>
             </div>
 
-            <div className="detail-section">
-              <h3>Additional Information</h3>
-              <p><strong>Mailshot:</strong> {customer?.mailshot ? 'Yes' : 'No'}</p>
             </div>
-          </div>
         ) : activeTab === 1 ? (
           <div className="notes-section">
             <div className="notes-header">
@@ -543,7 +593,7 @@ function CustomerSummary() {
                           <IconButton size="small" onClick={() => openEditPlantHoldingDialog(holding)}>
                             <EditIcon />
                           </IconButton>
-                          <IconButton size="small" color="error" onClick={() => handleDeletePlantHolding(holding.holdingID)}>
+                          <IconButton size="small" color="error" onClick={() => openDeleteHoldingDialog(holding)}>
                             <DeleteIcon />
                           </IconButton>
                         </TableCell>
@@ -669,17 +719,6 @@ function CustomerSummary() {
               fullWidth
               margin="normal"
             />
-            <div className="checkbox-field">
-              <label>
-                <input
-                  type="checkbox"
-                  name="mailshot"
-                  checked={editingCustomer?.mailshot || false}
-                  onChange={handleInputChange}
-                />
-                Mailshot
-              </label>
-            </div>
           </div>
         </DialogContent>
         <DialogActions>
@@ -778,6 +817,131 @@ function CustomerSummary() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Delete Customer Dialog */}
+      <Dialog
+        open={deleteCustomerDialog}
+        onClose={() => setDeleteCustomerDialog(false)}
+        aria-labelledby="delete-customer-dialog-title"
+      >
+        <DialogTitle id="delete-customer-dialog-title">
+          Confirm Customer Deletion
+        </DialogTitle>
+        <DialogContent>
+          <div>
+            <p>Are you sure you want to delete this customer?</p>
+            {customer && (
+              <>
+                <p><strong>Company:</strong> {customer.companyName}</p>
+                <p><strong>Contact:</strong> {customer.contactTitle} {customer.contactFirstNames} {customer.contactSurname}</p>
+              </>
+            )}
+            <p style={{ color: '#d32f2f', marginTop: '1rem' }}>
+              This action cannot be undone. All associated notes and plant holdings will also be deleted.
+            </p>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteCustomerDialog(false)}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleDeleteCustomer}
+            color="error"
+            variant="contained"
+          >
+            Delete Customer
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Note Dialog */}
+      <Dialog
+        open={deleteNoteDialog}
+        onClose={() => setDeleteNoteDialog(false)}
+        aria-labelledby="delete-note-dialog-title"
+      >
+        <DialogTitle id="delete-note-dialog-title">
+          Confirm Note Deletion
+        </DialogTitle>
+        <DialogContent>
+          <div>
+            <p>Are you sure you want to delete this note?</p>
+            {noteToDelete && (
+              <p><strong>Note:</strong> {noteToDelete.noteText}</p>
+            )}
+            <p style={{ color: '#d32f2f', marginTop: '1rem' }}>
+              This action cannot be undone.
+            </p>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteNoteDialog(false)}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleConfirmDeleteNote}
+            color="error"
+            variant="contained"
+          >
+            Delete Note
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Delete Plant Holding Dialog */}
+      <Dialog
+        open={deleteHoldingDialog}
+        onClose={() => setDeleteHoldingDialog(false)}
+        aria-labelledby="delete-holding-dialog-title"
+      >
+        <DialogTitle id="delete-holding-dialog-title">
+          Confirm Plant Holding Deletion
+        </DialogTitle>
+        <DialogContent>
+          <div>
+            <p>Are you sure you want to delete this plant holding?</p>
+            {holdingToDelete && (
+              <>
+                <p><strong>Plant:</strong> {holdingToDelete.plantDescription}</p>
+                <p><strong>Serial Number:</strong> {holdingToDelete.serialNumber}</p>
+                <p><strong>Status:</strong> {holdingToDelete.status}</p>
+              </>
+            )}
+            <p style={{ color: '#d32f2f', marginTop: '1rem' }}>
+              This action cannot be undone. All associated inspections will also be deleted.
+            </p>
+          </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteHoldingDialog(false)}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={handleDeletePlantHolding}
+            color="error"
+            variant="contained"
+          >
+            Delete Plant Holding
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Add Snackbar component at the end */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <MuiAlert
+          onClose={handleSnackbarClose}
+          severity={snackbar.severity}
+          variant="filled"
+        >
+          {snackbar.message}
+        </MuiAlert>
+      </Snackbar>
     </div>
   );
 }

@@ -400,3 +400,4 @@ FodyWeavers.xsd
 *.sln.iml
 frontend/CertificateTemplate_Allen.docx
 frontend/CertificateTemplate_Allen.pdf
+test-webapi/appsettings.json

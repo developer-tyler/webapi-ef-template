@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using test_webapi.DTOs;
 using test_webapi.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace test_webapi.Controllers
 {
@@ -64,8 +65,19 @@ namespace test_webapi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHolding(int id)
         {
-            await _service.DeleteHoldingAsync(id);
-            return NoContent();
+            try
+            {
+                await _service.DeleteHoldingAsync(id);
+                return NoContent();
+            }
+            catch (DbUpdateException ex) when (ex.InnerException?.Message.Contains("FK_Inspections_PlantHoldings_HoldingID") == true)
+            {
+                return BadRequest("This plant holding cannot be deleted because it has associated inspections.");
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An error occurred while deleting the plant holding.");
+            }
         }
     }
 }

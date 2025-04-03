@@ -57,8 +57,7 @@ namespace test_webapi.Data
                     Postcode = "12345",
                     Telephone = "123-456-7890",
                     Fax = "123-456-7891",
-                    Email = "john.doe@companya.com",
-                    Mailshot = true
+                    Email = "john.doe@companya.com"
                 });
 
                 notes.Add(new NoteEntity
@@ -84,32 +83,39 @@ namespace test_webapi.Data
                 .HasOne(p => p.Category)
                 .WithMany(c => c.Plants)
                 .HasForeignKey(p => p.PlantCategory)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PlantHolding>()
                 .HasOne(p => p.Customer)
                 .WithMany()
                 .HasForeignKey(p => p.CustID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PlantHolding>()
                 .HasOne(p => p.Plant)
                 .WithMany()
                 .HasForeignKey(p => p.PlantNameID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PlantHolding>()
                 .HasOne(p => p.Status)
                 .WithMany(s => s.PlantHoldings)
                 .HasForeignKey(p => p.StatusID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             // Configure Inspection relationship
             modelBuilder.Entity<Inspection>()
                 .HasOne(i => i.PlantHolding)
                 .WithMany()
                 .HasForeignKey(i => i.HoldingID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure cascade delete for Notes when Customer is deleted
+            modelBuilder.Entity<NoteEntity>()
+                .HasOne(n => n.Customer)
+                .WithMany(c => c.Notes)
+                .HasForeignKey(n => n.CustID)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
