@@ -18,6 +18,8 @@ import MuiAlert from '@mui/material/Alert';
 import { Delete as DeleteIcon, Edit as EditIcon } from '@mui/icons-material';
 import './ManagePlant.css';
 
+const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5207/api';
+
 function ManagePlant() {
   const { isDarkMode } = useTheme();
   const [plants, setPlants] = useState([]);
@@ -45,7 +47,7 @@ function ManagePlant() {
 
   const fetchPlants = async () => {
     try {
-      const response = await fetch('http://localhost:5207/api/AllPlant');
+      const response = await fetch(`${baseUrl}/AllPlant`);
       if (!response.ok) {
         throw new Error('Failed to fetch plants');
       }
@@ -60,7 +62,7 @@ function ManagePlant() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:5207/api/PlantCategories');
+      const response = await fetch(`${baseUrl}/PlantCategories`);
       if (!response.ok) {
         throw new Error('Failed to fetch categories');
       }
@@ -102,7 +104,7 @@ function ManagePlant() {
 
   const handleCreatePlant = async () => {
     try {
-      const response = await fetch('http://localhost:5207/api/AllPlant', {
+      const response = await fetch(`${baseUrl}/AllPlant`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -130,7 +132,7 @@ function ManagePlant() {
 
   const handleUpdatePlant = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/AllPlant/${editingPlant.plantNameID}`, {
+      const response = await fetch(`${baseUrl}/AllPlant/${editingPlant.plantNameID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -172,7 +174,7 @@ function ManagePlant() {
 
   const handleDelete = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/AllPlant/${plantToDelete.plantNameID}`, {
+      const response = await fetch(`${baseUrl}/AllPlant/${plantToDelete.plantNameID}`, {
         method: 'DELETE',
       });
 

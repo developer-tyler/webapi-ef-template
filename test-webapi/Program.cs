@@ -20,7 +20,10 @@ builder.Services.AddCors(options =>
         policy => policy
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .WithOrigins("http://localhost:3000")); // React's default port
+            .WithOrigins(
+                "http://localhost:3000",  // Keep original CRA port
+                "http://localhost:3001"   // Add Vite development port
+            ));
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -63,7 +66,7 @@ app.UseCors("AllowReactApp");
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "build")),
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "..", "frontend", "dist")),
     RequestPath = ""
 });
 

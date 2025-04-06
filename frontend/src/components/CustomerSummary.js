@@ -36,6 +36,8 @@ import './CustomerSummary.css';
 import InspectionList from './InspectionList';
 import MuiAlert from '@mui/material/Alert';
 
+const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5207/api';
+
 function CustomerSummary() {
   const { custId } = useParams();
   const navigate = useNavigate();
@@ -63,7 +65,6 @@ function CustomerSummary() {
     statusID: '',
     swl: ''
   });
-  // Add snackbar state
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -82,8 +83,8 @@ function CustomerSummary() {
   const fetchCustomerAndNotes = useCallback(async () => {
     try {
       const [customerResponse, notesResponse] = await Promise.all([
-        fetch(`http://localhost:5207/api/Customers/${custId}`),
-        fetch('http://localhost:5207/api/Notes')
+        fetch(`${baseUrl}/Customers/${custId}`),
+        fetch(`${baseUrl}/Notes`)
       ]);
 
       if (!customerResponse.ok || !notesResponse.ok) {
@@ -110,7 +111,7 @@ function CustomerSummary() {
 
   const fetchPlantHoldings = useCallback(async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/PlantHolding/customer/${custId}`);
+      const response = await fetch(`${baseUrl}/PlantHolding/customer/${custId}`);
       if (!response.ok) {
         throw new Error('Failed to fetch plant holdings');
       }
@@ -124,8 +125,8 @@ function CustomerSummary() {
   const fetchPlantAndStatusOptions = useCallback(async () => {
     try {
       const [plantsResponse, statusesResponse] = await Promise.all([
-        fetch('http://localhost:5207/api/AllPlant'),
-        fetch('http://localhost:5207/api/Status')
+        fetch(`${baseUrl}/AllPlant`),
+        fetch(`${baseUrl}/Status`)
       ]);
 
       if (!plantsResponse.ok || !statusesResponse.ok) {
@@ -154,7 +155,6 @@ function CustomerSummary() {
     navigate('/customers');
   };
 
-  // Add handleSnackbarClose function
   const handleSnackbarClose = () => {
     setSnackbar(prev => ({ ...prev, open: false }));
   };
@@ -175,10 +175,9 @@ function CustomerSummary() {
     });
   };
 
-  // Update handleEditCustomer
   const handleEditCustomer = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/Customers/${custId}`, {
+      const response = await fetch(`${baseUrl}/Customers/${custId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -198,14 +197,13 @@ function CustomerSummary() {
     }
   };
 
-  // Update handleDeleteCustomer
   const openDeleteCustomerDialog = () => {
     setDeleteCustomerDialog(true);
   };
 
   const handleDeleteCustomer = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/Customers/${custId}`, {
+      const response = await fetch(`${baseUrl}/Customers/${custId}`, {
         method: 'DELETE'
       });
 
@@ -217,7 +215,7 @@ function CustomerSummary() {
       setDeleteCustomerDialog(false);
       setTimeout(() => {
         navigate('/customers');
-      }, 1000); // Give time for the success message to be seen
+      }, 1000);
 
     } catch (err) {
       showError(err.message);
@@ -234,7 +232,7 @@ function CustomerSummary() {
 
   const handleCreateNote = async () => {
     try {
-      const response = await fetch('http://localhost:5207/api/Notes', {
+      const response = await fetch(`${baseUrl}/Notes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -261,7 +259,7 @@ function CustomerSummary() {
 
   const handleUpdateNote = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/Notes/${editingNote.noteID}`, {
+      const response = await fetch(`${baseUrl}/Notes/${editingNote.noteID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -300,7 +298,7 @@ function CustomerSummary() {
 
   const handleConfirmDeleteNote = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/Notes/${noteToDelete.noteID}`, {
+      const response = await fetch(`${baseUrl}/Notes/${noteToDelete.noteID}`, {
         method: 'DELETE'
       });
 
@@ -327,7 +325,7 @@ function CustomerSummary() {
 
   const handleCreatePlantHolding = async () => {
     try {
-      const response = await fetch('http://localhost:5207/api/PlantHolding', {
+      const response = await fetch(`${baseUrl}/PlantHolding`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -345,7 +343,6 @@ function CustomerSummary() {
       }
 
       const createdHolding = await response.json();
-      // Add the new holding with the complete data from the server
       setPlantHoldings(prev => [...prev, createdHolding]);
       setPlantHoldingDialogOpen(false);
       resetPlantHoldingForm();
@@ -356,7 +353,7 @@ function CustomerSummary() {
 
   const handleUpdatePlantHolding = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/PlantHolding/${editingPlantHolding.holdingID}`, {
+      const response = await fetch(`${baseUrl}/PlantHolding/${editingPlantHolding.holdingID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -394,7 +391,7 @@ function CustomerSummary() {
 
   const handleDeletePlantHolding = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/PlantHolding/${holdingToDelete.holdingID}`, {
+      const response = await fetch(`${baseUrl}/PlantHolding/${holdingToDelete.holdingID}`, {
         method: 'DELETE'
       });
 
@@ -818,7 +815,6 @@ function CustomerSummary() {
         </DialogActions>
       </Dialog>
 
-      {/* Delete Customer Dialog */}
       <Dialog
         open={deleteCustomerDialog}
         onClose={() => setDeleteCustomerDialog(false)}
@@ -855,7 +851,6 @@ function CustomerSummary() {
         </DialogActions>
       </Dialog>
 
-      {/* Delete Note Dialog */}
       <Dialog
         open={deleteNoteDialog}
         onClose={() => setDeleteNoteDialog(false)}
@@ -889,7 +884,6 @@ function CustomerSummary() {
         </DialogActions>
       </Dialog>
 
-      {/* Delete Plant Holding Dialog */}
       <Dialog
         open={deleteHoldingDialog}
         onClose={() => setDeleteHoldingDialog(false)}
@@ -927,7 +921,6 @@ function CustomerSummary() {
         </DialogActions>
       </Dialog>
 
-      {/* Add Snackbar component at the end */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

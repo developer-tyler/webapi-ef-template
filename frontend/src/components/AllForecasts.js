@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import './AllForecasts.css';
 
+const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5207/api';
+
 function AllForecasts() {
   const { isDarkMode } = useTheme();
   const [forecasts, setForecasts] = useState([]);
@@ -14,7 +16,7 @@ function AllForecasts() {
 
   const fetchForecasts = async () => {
     try {
-      const response = await fetch('http://localhost:5207/api/Summaries');
+      const response = await fetch(`${baseUrl}/Summaries`);
       if (!response.ok) {
         throw new Error('Failed to fetch forecasts');
       }

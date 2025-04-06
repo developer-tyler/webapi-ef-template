@@ -12,6 +12,8 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import './AllCustomers.css';
 
+const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5207/api';
+
 function AllCustomers() {
   const { isDarkMode } = useTheme();
   const [customers, setCustomers] = useState([]);
@@ -70,8 +72,8 @@ function AllCustomers() {
   const fetchCustomersAndNotes = async () => {
     try {
       const [customersResponse, notesResponse] = await Promise.all([
-        fetch('http://localhost:5207/api/Customers'),
-        fetch('http://localhost:5207/api/Notes')
+        fetch(`${baseUrl}/Customers`),
+        fetch(`${baseUrl}/Notes`)
       ]);
 
       if (!customersResponse.ok || !notesResponse.ok) {
@@ -129,7 +131,7 @@ function AllCustomers() {
   const handleCreateCustomer = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5207/api/Customers', {
+      const response = await fetch(`${baseUrl}/Customers`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -164,7 +166,7 @@ function AllCustomers() {
 
   const handleDeleteCustomer = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/Customers/${customerToDelete.custID}`, {
+      const response = await fetch(`${baseUrl}/Customers/${customerToDelete.custID}`, {
         method: 'DELETE'
       });
 

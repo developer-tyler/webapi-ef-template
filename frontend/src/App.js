@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { IconButton, Menu, MenuItem } from '@mui/material';
+import { IconButton, Menu, MenuItem, CssBaseline } from '@mui/material';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
 import './App.css';
 import AllForecasts from './components/AllForecasts';
@@ -10,7 +10,7 @@ import CustomerSummary from './components/CustomerSummary';
 import PlantCategories from './components/PlantCategories';
 import ManagePlant from './components/ManagePlant';
 import CertificatePage from './components/CertificatePage';
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { ThemeProvider as CustomThemeProvider, useTheme } from './contexts/ThemeContext';
 import './components/AllForecasts.css';
 import './components/AllCustomers.css';
 import './components/CustomerNotes.css';
@@ -29,7 +29,7 @@ function RandomForecast() {
   const fetchWeatherData = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5207/api/Summaries');
+      const response = await fetch('/api/Summaries');
       if (!response.ok) {
         throw new Error('Failed to fetch weather data');
       }
@@ -131,11 +131,12 @@ function AppContent() {
 
 function App() {
   return (
-    <ThemeProvider>
+    <CustomThemeProvider>
+      <CssBaseline />
       <Router>
         <AppContent />
       </Router>
-    </ThemeProvider>
+    </CustomThemeProvider>
   );
 }
 

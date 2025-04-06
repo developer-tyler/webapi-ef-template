@@ -7,6 +7,8 @@ import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Search as Searc
 import "react-datepicker/dist/react-datepicker.css";
 import './CustomerNotes.css';
 
+const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5207/api';
+
 function CustomerNotes() {
   const { custId } = useParams();
   const navigate = useNavigate();
@@ -36,8 +38,8 @@ function CustomerNotes() {
   const fetchCustomerAndNotes = async () => {
     try {
       const [customerResponse, notesResponse] = await Promise.all([
-        fetch(`http://localhost:5207/api/Customers/${custId}`),
-        fetch('http://localhost:5207/api/Notes')
+        fetch(`${baseUrl}/Customers/${custId}`),
+        fetch(`${baseUrl}/Notes`)
       ]);
 
       if (!customerResponse.ok || !notesResponse.ok) {
@@ -89,7 +91,7 @@ function CustomerNotes() {
 
   const handleCreateNote = async () => {
     try {
-      const response = await fetch('http://localhost:5207/api/Notes', {
+      const response = await fetch(`${baseUrl}/Notes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +118,7 @@ function CustomerNotes() {
 
   const handleUpdateNote = async () => {
     try {
-      const response = await fetch(`http://localhost:5207/api/Notes/${editingNote.noteID}`, {
+      const response = await fetch(`${baseUrl}/Notes/${editingNote.noteID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -150,7 +152,7 @@ function CustomerNotes() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5207/api/Notes/${noteId}`, {
+      const response = await fetch(`${baseUrl}/Notes/${noteId}`, {
         method: 'DELETE',
       });
 
