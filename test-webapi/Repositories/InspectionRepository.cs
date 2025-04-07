@@ -18,9 +18,9 @@ namespace test_webapi.Repositories
             return await _context.Inspections
                 .Include(i => i.PlantHolding!)
                 .ThenInclude(ph => ph!.Plant!)
-                .ThenInclude(p => p!.Category)
-                .Include(i => i.PlantHolding!)
+                .ThenInclude(p => p!.Category)                .Include(i => i.PlantHolding!)
                 .ThenInclude(ph => ph!.Customer)
+                .Include(i => i.Inspector)
                 .ToListAsync();
         }
 
@@ -29,9 +29,9 @@ namespace test_webapi.Repositories
             return await _context.Inspections
                 .Include(i => i.PlantHolding!)
                 .ThenInclude(ph => ph!.Plant!)
-                .ThenInclude(p => p!.Category)
-                .Include(i => i.PlantHolding!)
+                .ThenInclude(p => p!.Category)                .Include(i => i.PlantHolding!)
                 .ThenInclude(ph => ph!.Customer)
+                .Include(i => i.Inspector)
                 .FirstOrDefaultAsync(i => i.UniqueRef == id);
         }
 
@@ -40,9 +40,9 @@ namespace test_webapi.Repositories
             return await _context.Inspections
                 .Include(i => i.PlantHolding!)
                 .ThenInclude(ph => ph!.Plant!)
-                .ThenInclude(p => p!.Category)
-                .Include(i => i.PlantHolding!)
+                .ThenInclude(p => p!.Category)                .Include(i => i.PlantHolding!)
                 .ThenInclude(ph => ph!.Customer)
+                .Include(i => i.Inspector)
                 .Where(i => i.HoldingID == holdingId)
                 .ToListAsync();
         }

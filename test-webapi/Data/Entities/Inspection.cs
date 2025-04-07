@@ -16,11 +16,14 @@ namespace test_webapi.Data.Entities
         public string? Defects { get; set; }
         public string? Rectified { get; set; }
         public DateTime? LatestDate { get; set; }
-        public string? TestDetails { get; set; }
-        public string? MiscNotes { get; set; }
+        public string? TestDetails { get; set; }        public string? MiscNotes { get; set; }
+        public int? InspectorID { get; set; }
 
-        // Navigation property
+        // Navigation properties
         [ForeignKey("HoldingID")]
         public virtual PlantHolding? PlantHolding { get; set; }
+        
+        [ForeignKey("InspectorID")]
+        public virtual InspectorEntity? Inspector { get; set; }
     }
 }

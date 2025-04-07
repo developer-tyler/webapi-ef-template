@@ -17,8 +17,11 @@ namespace test_webapi.DTOs
         
         // Additional properties from related entities
         public string? PlantDescription { get; set; }
-        public string? CategoryDescription { get; set; }
-        public string? SerialNumber { get; set; }
+        public string? CategoryDescription { get; set; }        public string? SerialNumber { get; set; }
+        
+        // Inspector properties
+        public int? InspectorID { get; set; }
+        public string? InspectorsName { get; set; }
         
         // Customer properties
         public int? CustID { get; set; }

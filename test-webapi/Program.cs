@@ -44,6 +44,8 @@ builder.Services.AddScoped<IPlantHoldingRepository, PlantHoldingRepository>();
 builder.Services.AddScoped<IPlantHoldingService, PlantHoldingService>();
 builder.Services.AddScoped<IInspectionRepository, InspectionRepository>();
 builder.Services.AddScoped<IInspectionService, InspectionService>();
+builder.Services.AddScoped<IInspectorRepository, InspectorRepository>();
+builder.Services.AddScoped<IInspectorService, InspectorService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddControllers();

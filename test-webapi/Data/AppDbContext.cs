@@ -17,6 +17,7 @@ namespace test_webapi.Data
         public DbSet<Status> Status { get; set; }
         public DbSet<PlantHolding> PlantHoldings { get; set; }
         public DbSet<Inspection> Inspections { get; set; }
+        public DbSet<InspectorEntity> Inspectors { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -109,6 +110,13 @@ namespace test_webapi.Data
                 .WithMany()
                 .HasForeignKey(i => i.HoldingID)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Configure Inspection relationship with InspectedByEntity
+            modelBuilder.Entity<Inspection>()
+                .HasOne(i => i.Inspector)
+                .WithMany(inspector => inspector.Inspections)
+                .HasForeignKey(i => i.InspectorID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Configure cascade delete for Notes when Customer is deleted
             modelBuilder.Entity<NoteEntity>()
