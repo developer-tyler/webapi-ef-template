@@ -1,8 +1,7 @@
 import React from 'react';
-import { Page, Text, View, Document, StyleSheet, Font, pdf } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet, Font, Image, pdf } from '@react-pdf/renderer';
 import { format } from 'date-fns';
 
-// Register fonts
 Font.register({
     family: 'Helvetica',
     fonts: [
@@ -14,12 +13,10 @@ Font.register({
     ]
 });
 
-// Create styles
-const styles = StyleSheet.create({
-    page: {
+const styles = StyleSheet.create({    page: {
         padding: 30,
         fontFamily: 'Helvetica',
-        fontSize: 10
+        fontSize: 9
     },
     headerContainer: {
         flexDirection: 'row',
@@ -29,12 +26,12 @@ const styles = StyleSheet.create({
         paddingBottom: 2
     },
     skyText: {
-        fontSize: 48,
+        fontSize: 45,
         fontWeight: 'bold',
         lineHeight: 1
     },
     technicalServicesText: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
         marginLeft: 5,
         lineHeight: 1
@@ -52,11 +49,11 @@ const styles = StyleSheet.create({
     },
     titleContainer: {
         alignItems: 'center',
-        marginBottom: 15
+        marginBottom: 2
     },
     mainTitle: {
         fontWeight: 'bold',
-        fontSize: 12,
+        fontSize: 11,
         textAlign: 'center',
         marginBottom: 2
     },
@@ -101,24 +98,42 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     addressText: {
-        marginTop: 5
+        marginTop: 2
+    },
+    addressTextIndent: {
+        marginTop: 2,
+        marginLeft: 20
     },
     dateRecord: {
         marginTop: 10,
         fontWeight: 'bold',
         textDecoration: 'underline'
+    },
+    inspectorDetails: {
+        marginTop: 5,
+        marginBottom: 5
+    },    signature: {
+        marginTop: 5,
+        marginBottom: 5,
+        width: 150,
+        height: 60,
+        alignSelf: 'flex-start'
+    },
+    mailto:{
+        color: 'blue',
+        textDecoration: 'underline'
     }
 });
 
-const InspectionCertificateTemplate = ({ inspection }) => {
-    const currentDate = new Date();
+const InspectionCertificateTemplate = ({ inspection }) => {    const currentDate = new Date();
     const recordNumber = `${format(currentDate, 'yyyy/M')}/${inspection.custID}/${inspection.uniqueRef}`;
+    // Create URL for signature image
+    const signaturePath = new URL(`../signatures/${inspection.inspectorsName?.toLowerCase().replace(/\s+/g, '_')}.jpg`, import.meta.url).href;
 
     const formatDate = (date) => {
         return date ? format(new Date(date), 'dd/MM/yyyy') : '';
     };
 
-    // Helper function to format address
     const formatAddress = () => {
         const lines = [
             inspection.companyName,
@@ -127,7 +142,7 @@ const InspectionCertificateTemplate = ({ inspection }) => {
             inspection.line3,
             inspection.line4,
             inspection.postcode
-        ].filter(line => line); // Remove empty/null/undefined lines
+        ].filter(line => line);
         
         return lines.join('\n');
     };
@@ -279,17 +294,22 @@ const InspectionCertificateTemplate = ({ inspection }) => {
                             I hereby declare that the equipment described in this record was thoroughly examined in accordance with the appropriate provisions and found free from any defect likely to affect safety other than those listed above on <Text style={styles.bold}>{formatDate(inspection.inspectionDate)}</Text> and that the above particulars are correct.
                         </Text>
                     </View>
-
-                    <Text>Engineering Surveyor</Text>
+                    <View style={styles.declaration}>
+                        <Text style={styles.bold}>Signature or other identification</Text>
+                    </View> 
+                    <View style={styles.inspectorDetails}>
+                        <Image src={signaturePath} style={styles.signature} />
+                        <Text>Engineering Surveyor: {inspection.inspectorsName}</Text>
+                    </View>
 
                     <Text style={[styles.bold, styles.addressText]}>
                         Name and address of person authenticating the record and responsible for the thorough examination.
                     </Text>
 
-                    <Text style={styles.addressText}>
+                    <Text style={styles.addressTextIndent}>
                         Sky Technical Services Ltd{'\n'}
                         4 Victoria Cottages{'\n'}
-                        Love Lane, Mayfield, E.Sussex. TN20 6EN.        Tel 01435 873355 / 07703 292932.       Email info@skytechnical.co.uk
+                        Love Lane, Mayfield, E.Sussex. TN20 6EN.        Tel 01435 873355 / 07703 292932.       Email <Text style={styles.mailto}>info@skytechnical.co.uk</Text>
                     </Text>
 
                     <Text style={styles.dateRecord}>
@@ -301,14 +321,12 @@ const InspectionCertificateTemplate = ({ inspection }) => {
     );
 };
 
-// Add function to generate PDF blob
 export const generatePdfBlob = async (inspection) => {
     const doc = <InspectionCertificateTemplate inspection={inspection} />;
     const blob = await pdf(doc).toBlob();
     return blob;
 };
 
-// Add utility function for consistent PDF filename generation
 export const getPdfFileName = (inspection) => {
     const dateStr = inspection.inspectionDate ? format(new Date(inspection.inspectionDate), 'dd-MM-yyyy') : '';
     const safeName = (str) => str?.replace(/[^a-z0-9-]/gi, '-').toLowerCase() || '';

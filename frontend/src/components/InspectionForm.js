@@ -3,6 +3,7 @@ import DatePicker from 'react-datepicker';
 import { format } from 'date-fns';
 import "react-datepicker/dist/react-datepicker.css";
 import "./InspectionForm.css";
+import inspectorService from '../services/inspectorService';
 
 const InspectionForm = ({ inspection, onSubmit, onCancel, holdingId }) => {
     const [formData, setFormData] = useState({
@@ -16,10 +17,25 @@ const InspectionForm = ({ inspection, onSubmit, onCancel, holdingId }) => {
         rectified: '',
         latestDate: null,
         testDetails: '',
-        miscNotes: ''
+        miscNotes: '',
+        inspectorName: ''
     });
 
+    const [inspectors, setInspectors] = useState([]);
+
     useEffect(() => {
+        const fetchInspectors = async () => {
+            try {
+                const data = await inspectorService.getAll();
+                console.log('Fetched inspectors:', data); // Debugging log
+                setInspectors(data);
+            } catch (error) {
+                console.error('Failed to fetch inspectors:', error);
+            }
+        };
+
+        fetchInspectors();
+
         if (inspection) {
             setFormData({
                 ...inspection,
@@ -49,146 +65,110 @@ const InspectionForm = ({ inspection, onSubmit, onCancel, holdingId }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const submissionData = {
-            ...formData,
-            holdingID: parseInt(holdingId),
-            inspectionDate: formData.inspectionDate ? formData.inspectionDate.toISOString() : null,
-            latestDate: formData.latestDate ? formData.latestDate.toISOString() : null
-        };
-        onSubmit(submissionData);
-    };
-
     return (
-        <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto p-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
-                <div className="form-group">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Inspection Date</label>
-                    <DatePicker
-                        selected={formData.inspectionDate}
-                        onChange={(date) => handleDateChange(date, 'inspectionDate')}
-                        dateFormat="dd/MM/yyyy"
-                        className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                        placeholderText="Select date"
-                    />
-                </div>
+        <form onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit(formData);
+        }}>
+            <label htmlFor="inspectionDate">Inspection Date:</label>
+            <DatePicker
+                id="inspectionDate"
+                selected={formData.inspectionDate}
+                onChange={(date) => handleDateChange(date, 'inspectionDate')}
+                dateFormat="yyyy-MM-dd"
+                required
+            />
 
-                <div className="form-group">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
-                    <input
-                        type="text"
-                        name="location"
-                        value={formData.location || ''}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                    />
-                </div>
+            <label htmlFor="location">Location:</label>
+            <input
+                id="location"
+                name="location"
+                type="text"
+                value={formData.location}
+                onChange={handleChange}
+                required
+            />
 
-                <div className="form-group">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Recent Check</label>
-                    <input
-                        type="text"
-                        name="recentCheck"
-                        value={formData.recentCheck || ''}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                    />
-                </div>
+            <label htmlFor="recentCheck">Recent Check:</label>
+            <input
+                id="recentCheck"
+                name="recentCheck"
+                type="text"
+                value={formData.recentCheck}
+                onChange={handleChange}
+            />
 
-                <div className="form-group">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Previous Check</label>
-                    <input
-                        type="text"
-                        name="previousCheck"
-                        value={formData.previousCheck || ''}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                    />
-                </div>
+            <label htmlFor="previousCheck">Previous Check:</label>
+            <input
+                id="previousCheck"
+                name="previousCheck"
+                type="text"
+                value={formData.previousCheck}
+                onChange={handleChange}
+            />
 
-                <div className="form-group">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Safe Working</label>
-                    <input
-                        type="text"
-                        name="safeWorking"
-                        value={formData.safeWorking || ''}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                    />
-                </div>
+            <label htmlFor="safeWorking">Safe Working:</label>
+            <input
+                id="safeWorking"
+                name="safeWorking"
+                type="text"
+                value={formData.safeWorking}
+                onChange={handleChange}
+            />
 
-                <div className="form-group md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Defects</label>
-                    <textarea
-                        name="defects"
-                        value={formData.defects || ''}
-                        onChange={handleChange}
-                        rows="3"
-                        className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                    />
-                </div>
+            <label htmlFor="defects">Defects:</label>
+            <textarea
+                id="defects"
+                name="defects"
+                value={formData.defects}
+                onChange={handleChange}
+            />
 
-                <div className="form-group md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Rectified</label>
-                    <textarea
-                        name="rectified"
-                        value={formData.rectified || ''}
-                        onChange={handleChange}
-                        rows="3"
-                        className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                    />
-                </div>
+            <label htmlFor="rectified">Rectified:</label>
+            <textarea
+                id="rectified"
+                name="rectified"
+                value={formData.rectified}
+                onChange={handleChange}
+            />
 
-                <div className="form-group">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Latest Date</label>
-                    <DatePicker
-                        selected={formData.latestDate}
-                        onChange={(date) => handleDateChange(date, 'latestDate')}
-                        dateFormat="dd/MM/yyyy"
-                        className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                        placeholderText="Select date"
-                    />
-                </div>
+            <label htmlFor="testDetails">Test Details:</label>
+            <textarea
+                id="testDetails"
+                name="testDetails"
+                value={formData.testDetails}
+                onChange={handleChange}
+            />
 
-                <div className="form-group md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Test Details</label>
-                    <textarea
-                        name="testDetails"
-                        value={formData.testDetails || ''}
-                        onChange={handleChange}
-                        rows="3"
-                        className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                    />
-                </div>
+            <label htmlFor="miscNotes">Misc Notes:</label>
+            <textarea
+                id="miscNotes"
+                name="miscNotes"
+                value={formData.miscNotes}
+                onChange={handleChange}
+            />
 
-                <div className="form-group md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Miscellaneous Notes</label>
-                    <textarea
-                        name="miscNotes"
-                        value={formData.miscNotes || ''}
-                        onChange={handleChange}
-                        rows="3"
-                        className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                    />
-                </div>
-            </div>
+            <label htmlFor="inspectorName">Inspector:</label>            <select
+                id="inspectorName"
+                name="inspectorName"
+                value={formData.inspectorName || ""}
+                onChange={handleChange}
+                required
+            >
+                <option value="">Select an inspector</option>
+                {inspectors.length > 0 ? (
+                    inspectors.map((inspector) => (
+                        <option key={inspector.inspectorID} value={inspector.inspectorsName}>
+                            {inspector.inspectorsName}
+                        </option>
+                    ))
+                ) : (
+                    <option value="" disabled>No inspectors available</option>
+                )}
+            </select>
 
-            <div className="flex justify-end space-x-3 pt-6">
-                <button
-                    type="button"
-                    onClick={onCancel}
-                    className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Cancel
-                </button>
-                <button
-                    type="submit"
-                    className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    {inspection ? 'Update' : 'Create'}
-                </button>
-            </div>
+            <button type="submit">Submit</button>
+            <button type="button" onClick={onCancel}>Cancel</button>
         </form>
     );
 };

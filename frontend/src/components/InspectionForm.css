@@ -1,42 +1,61 @@
-.react-datepicker-wrapper {
-    width: 100%;
-}
+/* Styling for the Inspection Form */
 
-.react-datepicker__input-container {
-    width: 100%;
-}
-
-.react-datepicker__input-container input {
-    width: 100%;
-    padding: 0.5rem 0.75rem;
-    height: 38px; /* Match the height of other inputs */
-    border-radius: 0.375rem;
-    border: 1px solid #D1D5DB;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-.react-datepicker__input-container input:focus {
-    outline: none;
-    border-color: #6366F1;
-    box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.2);
-}
-
-.dark .react-datepicker__input-container input {
-    background-color: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
-    color: white;
-}
-
-.form-group {
+form {
     display: flex;
     flex-direction: column;
+    gap: 1rem;
 }
 
-.form-group label {
+label {
+    font-weight: bold;
     margin-bottom: 0.5rem;
 }
 
-.form-group input,
-.form-group textarea {
-    min-height: 38px;
+input, select, textarea {
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #000;
+}
+
+select {
+    background-color: #ffffff;
+    color: #000000;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    min-width: 200px; /* Ensure minimum width for better visibility */
+    -webkit-appearance: menulist; /* Restore default dropdown appearance */
+    -moz-appearance: menulist;
+    appearance: menulist;
+}
+
+select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+option {
+    background-color: #ffffff; /* Ensure white background for options */
+    color: #000000; /* Ensure black text for options */
+    padding: 0.5rem;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+}
+
+button:hover {
+    background-color: #0056b3;
 }
