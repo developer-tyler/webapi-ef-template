@@ -18,7 +18,7 @@ const InspectionForm = ({ inspection, onSubmit, onCancel, holdingId }) => {
         latestDate: null,
         testDetails: '',
         miscNotes: '',
-        inspectorName: ''
+        inspectorID: null
     });
 
     const [inspectors, setInspectors] = useState([]);
@@ -36,11 +36,11 @@ const InspectionForm = ({ inspection, onSubmit, onCancel, holdingId }) => {
 
         fetchInspectors();
 
-        if (inspection) {
-            setFormData({
+        if (inspection) {            setFormData({
                 ...inspection,
                 inspectionDate: inspection.inspectionDate ? new Date(inspection.inspectionDate) : null,
-                latestDate: inspection.latestDate ? new Date(inspection.latestDate) : null
+                latestDate: inspection.latestDate ? new Date(inspection.latestDate) : null,
+                inspectorID: inspection.inspectorID || null
             });
         } else {
             setFormData(prev => ({
@@ -146,19 +146,18 @@ const InspectionForm = ({ inspection, onSubmit, onCancel, holdingId }) => {
                 name="miscNotes"
                 value={formData.miscNotes}
                 onChange={handleChange}
-            />
-
-            <label htmlFor="inspectorName">Inspector:</label>            <select
-                id="inspectorName"
-                name="inspectorName"
-                value={formData.inspectorName || ""}
+            />            <label htmlFor="inspectorID">Inspector:</label>            
+            <select
+                id="inspectorID"
+                name="inspectorID"
+                value={formData.inspectorID || ""}
                 onChange={handleChange}
                 required
             >
                 <option value="">Select an inspector</option>
                 {inspectors.length > 0 ? (
                     inspectors.map((inspector) => (
-                        <option key={inspector.inspectorID} value={inspector.inspectorsName}>
+                        <option key={inspector.inspectorID} value={inspector.inspectorID}>
                             {inspector.inspectorsName}
                         </option>
                     ))

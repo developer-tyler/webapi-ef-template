@@ -126,9 +126,10 @@ const styles = StyleSheet.create({    page: {
 });
 
 const InspectionCertificateTemplate = ({ inspection }) => {    const currentDate = new Date();
-    const recordNumber = `${format(currentDate, 'yyyy/M')}/${inspection.custID}/${inspection.uniqueRef}`;
-    // Create URL for signature image
-    const signaturePath = new URL(`../signatures/${inspection.inspectorsName?.toLowerCase().replace(/\s+/g, '_')}.jpg`, import.meta.url).href;
+    const recordNumber = `${format(currentDate, 'yyyy/M')}/${inspection.custID}/${inspection.uniqueRef}`;    // Get signature from secure API endpoint
+    const signaturePath = inspection.inspectorsName 
+        ? `http://localhost:5207/api/Signature/${encodeURIComponent(inspection.inspectorsName)}`
+        : '';
 
     const formatDate = (date) => {
         return date ? format(new Date(date), 'dd/MM/yyyy') : '';
@@ -296,9 +297,13 @@ const InspectionCertificateTemplate = ({ inspection }) => {    const currentDate
                     </View>
                     <View style={styles.declaration}>
                         <Text style={styles.bold}>Signature or other identification</Text>
-                    </View> 
-                    <View style={styles.inspectorDetails}>
-                        <Image src={signaturePath} style={styles.signature} />
+                    </View>                    <View style={styles.inspectorDetails}>
+                        {signaturePath && (
+                            <Image
+                                src={signaturePath}
+                                style={styles.signature}
+                            />
+                        )}
                         <Text>Engineering Surveyor: {inspection.inspectorsName}</Text>
                     </View>
 
