@@ -401,3 +401,4 @@ FodyWeavers.xsd
 frontend/CertificateTemplate_Allen.docx
 frontend/CertificateTemplate_Allen.pdf
 test-webapi/appsettings.json
+test-webapi/settings.bat
